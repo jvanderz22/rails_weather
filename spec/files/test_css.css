@@ -1,0 +1,21 @@
+/*date*/
+.point-forecast-icons > .one-ninth-first > .txt-ctr-caps{
+	background-color: blue;
+	font-size: xx-large;
+}
+/*day highs*/
+.point-forecast-icons > .one-ninth-first > .point-forecast-icons-high{
+	background-color: green;
+	font-size: x-large;
+}
+
+/*night lows*/
+.point-forecast-icons > .one-ninth-first > .point-forecast-icons-low{
+	background-color: red;
+	font-size: x-large;
+}
+
+/*all 7 days*/
+#point_forecast_details > .two-third-first > .point-forecast-7-day > li {
+  background-color: red;
+}

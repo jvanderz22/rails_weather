@@ -1,0 +1,10 @@
+/* date and time */
+.date > font > b {
+	background-color: blue;
+}
+
+/* everything else */
+
+tr {
+	background-color: green;
+}
