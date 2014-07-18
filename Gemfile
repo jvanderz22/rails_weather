@@ -50,6 +50,8 @@ group :test do
   gem 'webmock'
   gem 'faker'
   gem 'capybara'
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'launchy'
 end

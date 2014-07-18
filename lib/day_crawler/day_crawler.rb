@@ -1,13 +1,15 @@
 require 'nokogiri'
 require 'open-uri'
-require 'pry'
 
-class SevenDayCrawler
+class DayCrawler
   attr_reader :forecast
   def initialize
     uri = URI("http://forecast.weather.gov/MapClick.php?lat=41.8500262820005&lon=-87.65004892899964&site=all&smap=1#.U7w8uY1dXi5")
     @doc = Nokogiri::HTML(open(uri))
-    create_forecast
+  end
+
+  def forecast
+    @forecast ||= create_forecast
   end
 
   private
@@ -16,12 +18,17 @@ class SevenDayCrawler
     @forecast = []
     css = '#point_forecast_details > .two-third-first > .point-forecast-7-day > li'
     @doc.css(css).each do |day|
-      day_hash = {}
-      day_hash[:day] = find_day(day)
-      day_hash[:temp] = find_temp(day)
-      day_hash[:temp_type] = find_temp_type(day)
-      @forecast <<  day_hash
+         @forecast <<  create_day_hash(day)
     end
+    @forecast
+  end
+
+  def create_day_hash(day)
+    day_hash = {
+      :day => find_day(day),
+      :temperature => find_temp(day),
+      :temperature_type => find_temp_type(day)
+    }
   end
 
   def find_day(day_html)
