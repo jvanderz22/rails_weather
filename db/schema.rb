@@ -17,7 +17,6 @@ ActiveRecord::Schema.define(version: 20140717221546) do
   enable_extension "plpgsql"
 
   create_table "current_forecasts", force: true do |t|
-    t.datetime "time"
     t.integer  "temperature"
     t.string   "condition"
     t.string   "wind_speed"
@@ -35,8 +34,7 @@ ActiveRecord::Schema.define(version: 20140717221546) do
   end
 
   create_table "hour_forecasts", force: true do |t|
-    t.date     "date"
-    t.time     "hour"
+    t.datetime "time"
     t.integer  "temperature"
     t.integer  "wind"
     t.decimal  "precipitation"

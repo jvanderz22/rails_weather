@@ -1,0 +1,24 @@
+<h1>Hourly Forecast</h1>
+<p>Find me in app/views/hour_forecast/index.html.erb</p>
+
+<div>
+  <span> Date </span>
+  <span> Time </span>
+  <span> Temperature </span>
+  <span> Precipitation Percentage</span>
+  <span> Humidity </span>
+  <span> Wind Speed </span>
+  <span> Cloud Cover Percentage </span>
+</div>
+
+<% @hours.each do |hour| %>
+  <div>
+    <span> <%= hour[:date] %> </span>
+    <span> <%= hour[:hour] %> </span>
+    <span> <%= hour[:temperature] %> </span>
+    <span> <%= hour[:precipitation] %> </span>
+    <span> <%= hour[:humidity] %> </span>
+    <span> <%= hour[:wind] %> </span>
+    <span> <%= hour[:sky_cover] %> </span>
+  </div>
+<% end %>

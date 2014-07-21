@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :day_forecast do
-    day "MyString"
-    temperature 1
-    temperature_type "MyString"
+    day "Wednesday"
+    temperature 50
+    temperature_type "High"
   end
 end

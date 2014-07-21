@@ -2,12 +2,11 @@
 
 FactoryGirl.define do
   factory :hour_forecast do
-    date "2014-07-16"
-    hour "2014-07-16 16:17:17"
-    temperature 1
-    wind 1
-    precipitation "9.99"
-    humidity "9.99"
-    sky_cover "9.99"
+    time Time.now
+    temperature 100
+    wind 20
+    precipitation 0.80
+    humidity 0.85
+    sky_cover 0.96
   end
 end

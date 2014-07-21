@@ -41,6 +41,12 @@ gem 'devise'
 
 gem 'whenever', :require => false
 
+group :development do
+  gem 'pry-rails', group: :development
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+end
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'

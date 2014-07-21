@@ -4,14 +4,21 @@ class DataExtractor
                                   /Sky Cover/, /Precipitation Potential/,
                                   /Relative Humidity/])
   def initialize(nokogiri_doc)
-    @data = {}
-    parse_data(nokogiri_doc)
+    @nokogiri_doc = nokogiri_doc
   end
 
+  def data
+    @data ||= parse_data(@nokogiri_doc)
+  end
+
+  private
+
   def parse_data(doc)
+    @data = {}
     doc.css("tr").each do |row|
       parse_row(row) if is_data_row?(row)
     end
+    @data
   end
 
   def parse_row(row)
@@ -53,6 +60,8 @@ class DataExtractor
   end
 
   def is_data_row?(row)
+    #The word "Hour" matches to a row that contains data, but there is a row that
+    #matches the /[\W]Hour/ Regex that does not contain data
     return false if !!(row.content.match(/[\W]Hour/))
     row.content.scan(RAW_HTML_LABELS).length == 1
   end

@@ -2,10 +2,9 @@
 
 FactoryGirl.define do
   factory :current_forecast do
-    time "2014-07-17 17:15:46"
-    temperature 1
-    condition "MyString"
-    wind_speed "MyString"
-    humidity 1
+    temperature 100
+    condition "Sunny"
+    wind_speed "E 3 mph"
+    humidity 0.56
   end
 end

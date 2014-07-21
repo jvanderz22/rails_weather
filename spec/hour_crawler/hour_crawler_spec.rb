@@ -11,17 +11,11 @@ describe HourCrawler do
     it "returns 24 hour hashes" do
       expect(@forecast.length).to eq(24)
     end
-    it "should correctly set the date" do
-      expect(@forecast[0][:date]).to eq("07/10/2014")
-      expect(@forecast[1][:date]).to eq("07/10/2014")
-      expect(@forecast[10][:date]).to eq("07/11/2014")
-      expect(@forecast[23][:date]).to eq("07/11/2014")
-    end
-    it "should correct set the time" do
-      expect(@forecast[0][:hour]).to eq("2:00 PM")
-      expect(@forecast[1][:hour]).to eq("3:00 PM")
-      expect(@forecast[10][:hour]).to eq("12:00 AM")
-      expect(@forecast[23][:hour]).to eq("1:00 PM")
+    it "should correct set the date and time" do
+      expect(@forecast[0][:time]).to eq("2014-07-10 14:00:00 -0500")
+      expect(@forecast[1][:time]).to eq("2014-07-10 15:00:00 -0500")
+      expect(@forecast[10][:time]).to eq("2014-07-11 00:00:00 -0500")
+      expect(@forecast[23][:time]).to eq("2014-07-11 13:00:00 -0500")
     end
     it "should correctly find temperature" do
       expect(@forecast[0][:temperature]).to eq(72)

@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
-  root to: 'home#index'
-  get 'home/index'
-  
+  get 'daily_forecast', to: 'daily_forecast#index'
+
+  get 'hourly_forecast', to: 'hourly_forecast#index'
+
+  get 'home', to: 'home#index'
+  root :to => redirect('/home')
+
   resources :current_conditions
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -15,15 +15,18 @@ class HourCrawler
   private
 
   def create_forecast
-    @forecast = []
-    date = "#{data[:date][0]}/#{get_year_today}"
-    (0..23).each do |hour|
-      tomorrow = data[:time][hour] == "00"  && hour != 0
-      date = "#{data[:date][1]}/#{get_year_tomorrow}" if tomorrow
-      @forecast << create_hour(hour, date)
+    forecast_array = []
+    date = data[:date][0] + '/' + get_year_today
+    (0..23).each do |hour_num|
+      date = data[:date][1] + '/' + get_year_tomorrow if is_tomorrow?(hour_num)
+      forecast_array << create_hour(hour_num, date)
     end
-    @forecast
+    forecast_array
   end
+
+   def is_tomorrow?(hour_num)
+     data[:time][hour_num] == "00" && hour_num != 0
+   end
 
   def data
     @raw_data ||= DataExtractor.new(Nokogiri::HTML(open(@uri))).data
@@ -37,29 +40,19 @@ class HourCrawler
     Date.today.succ.strftime("%Y")
   end
 
-  def create_hour(hour, date)
-    hour = {
-      :date => date,
-      :hour => convert_hour(data[:time][hour]),
-      :temperature => data[:temp][hour].to_i,
-      :precipitation => data[:precip][hour].to_f / 100,
-      :humidity => data[:humidity][hour].to_f / 100,
-      :sky_cover => data[:sky_cover][hour].to_f / 100,
-      :wind => data[:wind][hour].to_i
+  def create_hour(hour_num, date)
+    {
+      :time => create_time(data[:time][hour_num], date),
+      :temperature => data[:temp][hour_num].to_i,
+      :precipitation => data[:precip][hour_num].to_f / 100,
+      :humidity => data[:humidity][hour_num].to_f / 100,
+      :sky_cover => data[:sky_cover][hour_num].to_f / 100,
+      :wind => data[:wind][hour_num].to_i
     }
   end
 
-
-  def convert_hour(raw_hour)
-    int_hour = raw_hour.to_i
-    if int_hour == 0
-      "12:00 AM"
-    elsif int_hour == 12
-      "12:00 PM"
-    elsif int_hour < 12
-      int_hour.to_s + ":00 AM"
-    else
-      (int_hour - 12).to_s + ":00 PM"
-    end
+  def create_time(time, date)
+    date_split = date.split('/')
+    Time.local(date_split[2], date_split[0], date_split[1], time, "00", "00")
   end
 end

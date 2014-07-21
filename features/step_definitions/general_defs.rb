@@ -7,8 +7,11 @@ Given /^I can connect to the internet$/ do
   stub_request(:get, "http://forecast.weather.gov/MapClick.php?lat=41.92354&lon=-87.64915974012911&lg=english&&FcstType=digital").
     with(:headers => {'Accept'=>'*/*','Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
     to_return(:status => 200, :body => hourly_forecast, :headers => {})
+end
 
-
+Given /^I visit "(.+)"$/ do |page|
+  step "I can connect to the internet"
+  visit(page)
 end
 
 Then /^I should see "(.+)"$/ do |text|
