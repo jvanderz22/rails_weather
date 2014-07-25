@@ -6,6 +6,7 @@ class DayCrawler
   def initialize
     uri = URI("http://forecast.weather.gov/MapClick.php?lat=41.8500262820005&lon=-87.65004892899964&site=all&smap=1#.U7w8uY1dXi5")
     @doc = Nokogiri::HTML(open(uri))
+    @weekly_forecast = {}
   end
 
   def forecast
@@ -15,51 +16,87 @@ class DayCrawler
   private
 
   def create_forecast
-    @forecast = []
     css = '#point_forecast_details > .two-third-first > .point-forecast-7-day > li'
-    @doc.css(css).each do |day|
-         @forecast <<  create_day_hash(day)
+    days = @doc.css(css).map do |day|
+      forecast_type(day) == "Day" ? day_hash(day) : night_hash(day)
     end
-    @forecast
+    combine_days(days)
   end
 
-  def create_day_hash(day)
-    day_hash = {
-      :day => find_day(day),
-      :temperature => find_temp(day),
-      :temperature_type => find_temp_type(day)
+  def combine_days(days)
+    days.map do |day|
+      corresponding_day = days.detect do |matching_day|
+        matching_day[:day] == day[:day] && matching_day != day
+      end
+      if corresponding_day.nil?
+        corresponding_day = day[:day_recorded] ? empty_night_hash : empty_day_hash
+      end
+      day.merge(corresponding_day)
+    end.uniq
+  end
+
+  def empty_day_hash
+    {
+      day_recorded: false,
+      high: nil,
+      day_details: nil
     }
   end
 
-  def find_day(day_html)
-    if first_child_empty?(day_html)
-      day_html.children[1].content
-    else
-      day_html.children[0].content
-    end
+  def empty_night_hash
+    {
+      night_recorded: false,
+      low: nil,
+      night_details: nil
+    }
   end
 
-  def find_temp(day_html)
+  def day_hash(day)
+    {
+      day: day(day),
+      day_recorded: true,
+      high: temp(day),
+      day_details: details(day)
+    }
+  end
+
+  def night_hash(day)
+    {
+      day: day(day),
+      night_recorded: true,
+      low: temp(day),
+      night_details: details(day)
+    }
+  end
+
+  def day(day_html)
+    first_child_empty?(day_html) ? index = 1 : index = 0
+    day = day_html.children[index].content
+    day = "Today" if day == "Tonight" || day == "This Afternoon"
+    day.sub(" Night", "")
+  end
+
+  def temp(day_html)
     temp_string = find_temp_string(day_html)
     temp_string[/\d+/].to_i
   end
 
-  def find_temp_type(day_html)
-    if find_temp_string(day_html) =~ /high/
-      "High"
-    else
-      "Low"
-    end
+  def forecast_type(day_html)
+    !!(find_temp_string(day_html) =~ /high/) ? "Day" : "Night"
   end
 
 
   def find_temp_string(day_html)
-    forecast_string = day_html.children[1].content unless first_child_empty?(day_html)
-    forecast_string ||= day_html.children[2].content
+    forecast_string = details(day_html)
     forecast_string[/high near (\d+)/] || forecast_string[/low around (\d+)/]
   end
 
   def first_child_empty?(html)
-    !!(html.children[0].content =~ /^\s*$/)
+    html.content[0].strip.empty?
+  end
+
+  def details(day_html)
+    first_child_empty?(day_html) ? index = 2 : index = 1
+    day_html.children[index].content.strip
   end
 end

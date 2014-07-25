@@ -41,6 +41,8 @@ gem 'devise'
 
 gem 'whenever', :require => false
 
+gem 'browser-timezone-rails'
+
 group :development do
   gem 'pry-rails', group: :development
   gem 'pry-byebug'

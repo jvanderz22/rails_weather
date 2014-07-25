@@ -29,30 +29,30 @@ RSpec.describe HourForecast, :type => :model do
     expect(build(:hour_forecast, sky_cover: nil)).to be_invalid
   end
 
-  describe ".get_forecast" do
-    before(:each) do
-      time = Time.now
-      let(:upload_hash) {
-        { time: time,
-          temperature: 100,
-          precipitation: 0.54,
-          humidity: 0.60,
-          wind: 6,
-          sky_cover: 0.7
-        }
-      }
-      let(:converted_hash {
-        { date: time.month + '/' time.day + '/' time.year,
-          hour: time.strfttime('%I %P %z -06)q
-          temperature: 100,
-          precipation: "54%",
+  describe ".forecast" do
+    def uploaded_forecasts(time_offset)
+      (0..23).map do |index|
+        now = Time.now.utc
+        next_hour = now.hour + time_offset
+        forecast_time = Time.new(now.year, now.month, now.day, next_hour, "00", "00", "+00:00")
+        forecast_time += (index * 60 * 60)
+        create(:hour_forecast, time: forecast_time)
+      end
+    end
+    it "returns 24 future forecasts in the database" do
+      upload = uploaded_forecasts(1)
+      forecast = HourForecast.forecast
+      expect(forecast.length).to eq(24)
+      expect(forecast).to eq(upload)
+    end
+    it "does not return the same forecast if the first forecast is in the past" do
+      upload = uploaded_forecasts(0)
+      expect(HourForecast.forecast).to_not eq(upload)
+    end
+    it "still returns 24 forecasts if the first forecast is in the past" do
+      upload = uploaded_forecasts(0)
+      expect(HourForecast.forecast.length).to eq(24)
+    end
 
-      }
-      }
-    end
-    it "returns a forecast in the database" do
-      upload = create(:current_forecast)
-      expect(CurrentForecast.get_forecast).to eq(upload)
-    end
   end
 end

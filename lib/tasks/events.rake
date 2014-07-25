@@ -7,6 +7,7 @@ namespace :events do
   task day_scraper: :environment do
     forecasts = DayCrawler.new.forecast
     forecasts.each do |forecast|
+      puts forecast
       DayForecast.create(forecast)
     end
   end

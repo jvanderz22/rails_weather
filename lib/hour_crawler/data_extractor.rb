@@ -1,8 +1,8 @@
 class DataExtractor
   attr_reader :data
-  RAW_HTML_LABELS = Regexp.union([/Date/, /Hour/, /Temperature/, /Surface Wind/,
-                                  /Sky Cover/, /Precipitation Potential/,
-                                  /Relative Humidity/])
+  HTML_LABELS = ["Date", "Hour", "Temperature", "Surface Wind", "Sky Cover",
+    "Precipitation Potential", "Relative Humidity"]
+
   def initialize(nokogiri_doc)
     @nokogiri_doc = nokogiri_doc
   end
@@ -12,6 +12,10 @@ class DataExtractor
   end
 
   private
+
+  def regex_labels
+    Regexp.union(HTML_LABELS.map { |label| /#{label}/ })
+  end
 
   def parse_data(doc)
     @data = {}
@@ -24,11 +28,11 @@ class DataExtractor
   def parse_row(row)
     label = find_label(row)
     return if @data.has_key?(label)
-    extract_data(label, row)
+    @data[label] = extract_data(row)
   end
 
   def find_label(row)
-    raw_label = row.content.scan(RAW_HTML_LABELS)[0]
+    raw_label = row.content.scan(regex_labels)[0]
     convert_label(raw_label)
   end
 
@@ -43,19 +47,19 @@ class DataExtractor
     raw_label_converter[raw_label]
   end
 
-  def extract_data(label, row)
-    @data[label] = []
+  def extract_data(row)
     label_pos = find_label_pos(row)
-    row.children.each_with_index do |child, index|
-      next if index <= label_pos
+    row_data = []
+    row.children[label_pos + 1 .. -1].each do |child|
       col_content = child.content.strip
-      @data[label] << col_content unless col_content == ""
+      row_data << col_content unless col_content.empty?
     end
+    row_data
   end
 
   def find_label_pos(row)
     row.children.each_with_index do |child, index|
-      return index if !!(child.content.match(RAW_HTML_LABELS))
+      return index if !!(child.content.match(regex_labels))
     end
   end
 
@@ -63,6 +67,6 @@ class DataExtractor
     #The word "Hour" matches to a row that contains data, but there is a row that
     #matches the /[\W]Hour/ Regex that does not contain data
     return false if !!(row.content.match(/[\W]Hour/))
-    row.content.scan(RAW_HTML_LABELS).length == 1
+    row.content.scan(regex_labels).length == 1
   end
 end

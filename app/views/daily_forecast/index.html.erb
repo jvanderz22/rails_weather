@@ -1,2 +1,19 @@
-<h1>DailyForecast#index</h1>
-<p>Find me in app/views/daily_forecast/index.html.erb</p>
+<h1>Daily Forecast</h1>
+
+<% @days.each do |day| %>
+  <div>
+    <%= "Day: #{day.day}" %>
+  </div>
+  <div>
+    <% if day.day_recorded %> 
+      <%= "High: #{day.high}" %>
+      <%= "Day Forecast: #{day.day_details}" %>
+    <% end %>
+  </div>
+  <div>
+    <% if day.night_recorded %>
+      <%= "Low: #{day.low}" %>
+      <%= "Night Forecast: #{day.night_details}" %>
+    <% end %>
+  </div>
+<% end %>

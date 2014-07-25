@@ -32,6 +32,9 @@ GEM
     bcrypt (3.1.7)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    browser-timezone-rails (0.0.7)
+      jquery-rails
+      rails (>= 3.1)
     builder (3.2.2)
     byebug (2.7.0)
       columnize (~> 0.3)
@@ -236,6 +239,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  browser-timezone-rails
   capybara
   coffee-rails (~> 4.0.0)
   cucumber-rails

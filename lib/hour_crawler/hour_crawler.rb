@@ -1,9 +1,7 @@
 require 'nokogiri'
 require 'open-uri'
 
-
 class HourCrawler
-  attr_reader :forecast
   def initialize
     @uri = URI("http://forecast.weather.gov/MapClick.php?lat=41.92354&lon=-87.64915974012911&lg=english&&FcstType=digital")
   end
@@ -15,13 +13,11 @@ class HourCrawler
   private
 
   def create_forecast
-    forecast_array = []
     date = data[:date][0] + '/' + get_year_today
-    (0..23).each do |hour_num|
+    (0..23).map do |hour_num|
       date = data[:date][1] + '/' + get_year_tomorrow if is_tomorrow?(hour_num)
-      forecast_array << create_hour(hour_num, date)
+      create_hour(hour_num, date)
     end
-    forecast_array
   end
 
    def is_tomorrow?(hour_num)
@@ -29,15 +25,15 @@ class HourCrawler
    end
 
   def data
-    @raw_data ||= DataExtractor.new(Nokogiri::HTML(open(@uri))).data
+    @data ||= DataExtractor.new(Nokogiri::HTML(open(@uri))).data
   end
 
   def get_year_today
-    Date.today.strftime("%Y")
+    DateTime.now.strftime("%Y")
   end
 
   def get_year_tomorrow
-    Date.today.succ.strftime("%Y")
+    (DateTime.now + 1).strftime("%Y")
   end
 
   def create_hour(hour_num, date)
@@ -51,8 +47,8 @@ class HourCrawler
     }
   end
 
-  def create_time(time, date)
+  def create_time(hour, date)
     date_split = date.split('/')
-    Time.local(date_split[2], date_split[0], date_split[1], time, "00", "00")
+    Time.local(date_split[2], date_split[0], date_split[1], hour, "00", "00")
   end
 end

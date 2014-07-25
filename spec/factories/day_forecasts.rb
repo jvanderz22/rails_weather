@@ -3,7 +3,11 @@
 FactoryGirl.define do
   factory :day_forecast do
     day "Wednesday"
-    temperature 50
-    temperature_type "High"
+    high 80
+    low 50
+    day_details "Day details"
+    night_details "Night details"
+    day_recorded true
+    night_recorded true
   end
 end

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'daily_forecast/index'
+
   get 'daily_forecast', to: 'daily_forecast#index'
 
   get 'hourly_forecast', to: 'hourly_forecast#index'

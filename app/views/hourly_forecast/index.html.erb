@@ -13,12 +13,13 @@
 
 <% @hours.each do |hour| %>
   <div>
-    <span> <%= hour[:date] %> </span>
-    <span> <%= hour[:hour] %> </span>
+    <% time_zone_offset = Time.zone.now.strftime("%z").gsub("0", "").to_i %>
+    <span> <%= date_from_time(hour[:time], 0) %> </span>
+    <span> <%= hour_from_time(hour[:time], 0) %> </span>
     <span> <%= hour[:temperature] %> </span>
-    <span> <%= hour[:precipitation] %> </span>
-    <span> <%= hour[:humidity] %> </span>
+    <span> <%= convert_to_percentage(hour[:precipitation]) %> </span>
+    <span> <%= convert_to_percentage(hour[:humidity]) %> </span>
     <span> <%= hour[:wind] %> </span>
-    <span> <%= hour[:sky_cover] %> </span>
+    <span> <%= convert_to_percentage(hour[:sky_cover]) %> </span>
   </div>
 <% end %>

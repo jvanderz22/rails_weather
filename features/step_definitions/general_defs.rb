@@ -10,12 +10,15 @@ Given /^I can connect to the internet$/ do
 end
 
 Given /^I visit "(.+)"$/ do |page|
-  step "I can connect to the internet"
   visit(page)
 end
 
 Then /^I should see "(.+)"$/ do |text|
   expect(page).to have_content(text)
+end
+
+Then /^I should see "(.*?)" "(\d+)" times$/ do |text, times|
+  expect(page.text.scan(text).count).to eq(times.to_i)
 end
 
 Then /^"(.+)" should be a link to "(.+)"$/ do |link_text, page_name|

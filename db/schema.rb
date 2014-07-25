@@ -26,9 +26,13 @@ ActiveRecord::Schema.define(version: 20140717221546) do
   end
 
   create_table "day_forecasts", force: true do |t|
-    t.string   "day",              limit: 20
-    t.integer  "temperature"
-    t.string   "temperature_type", limit: 10
+    t.string   "day",            limit: 20
+    t.integer  "high"
+    t.integer  "low"
+    t.string   "day_details",    limit: 500
+    t.string   "night_details",  limit: 500
+    t.boolean  "day_recorded"
+    t.boolean  "night_recorded"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
