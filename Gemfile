@@ -38,6 +38,7 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 gem 'devise'
+gem 'globalphone'
 
 gem 'whenever', :require => false
 
@@ -62,4 +63,5 @@ group :test do
   gem 'database_cleaner'
   gem 'guard-rspec'
   gem 'launchy'
+  gem 'selenium-webdriver'
 end

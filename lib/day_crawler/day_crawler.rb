@@ -72,7 +72,7 @@ class DayCrawler
   def day(day_html)
     first_child_empty?(day_html) ? index = 1 : index = 0
     day = day_html.children[index].content
-    day = "Today" if day == "Tonight" || day == "This Afternoon"
+    day = "Today" if ["Tonight", "This Afternoon", "Late Afternoon"].include?(day)
     day.sub(" Night", "")
   end
 
@@ -82,13 +82,14 @@ class DayCrawler
   end
 
   def forecast_type(day_html)
-    !!(find_temp_string(day_html) =~ /high/) ? "Day" : "Night"
+    !!(find_temp_string(day_html) =~ /high|temperature/) ? "Day" : "Night"
   end
 
 
   def find_temp_string(day_html)
     forecast_string = details(day_html)
-    forecast_string[/high near (\d+)/] || forecast_string[/low around (\d+)/]
+    forecast_string[/high near (\d+)/] || forecast_string[/low around (\d+)/] ||
+      forecast_string[/temperature around (\d+)/]
   end
 
   def first_child_empty?(html)

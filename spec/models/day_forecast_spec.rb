@@ -1,6 +1,20 @@
 require 'spec_helper'
 
 RSpec.describe DayForecast, :type => :model do
+   let (:days_from_today) { ["Today", "Tuesday", "Wednesday", "Thursday",
+      "Friday", "Saturday", "Sunday"] }
+
+    def uploaded_forecast(upload_array, created_at = DateTime.now)
+      upload_array.map.with_index do |day, index|
+        if index == upload_array.length - 1
+         create(:day_forecast, day: day, created_at: created_at, night_recorded: false,
+                night_details: nil, low: nil)
+        else
+          create(:day_forecast, day: day, created_at: created_at)
+        end
+      end
+    end
+
   it "has a valid factory" do
     expect(create(:day_forecast)).to be_valid
   end
@@ -37,20 +51,7 @@ RSpec.describe DayForecast, :type => :model do
                  night_details: "Details")).to be_invalid
   end
   describe ".forecast" do
-    let (:days_from_today) { ["Today", "Tuesday", "Wednesday", "Thursday",
-      "Friday", "Saturday", "Sunday"] }
-
-    def uploaded_forecast(upload_array, created_at = DateTime.now)
-      upload_array.map.with_index do |day, index|
-        if index == upload_array.length - 1
-         create(:day_forecast, day: day, created_at: created_at, night_recorded: false,
-                night_details: nil, low: nil)
-        else
-          create(:day_forecast, day: day, created_at: created_at)
-        end
-      end
-    end
-
+   
     it "returns forecasts uploaded today" do
       upload_from_today = uploaded_forecast(days_from_today)
       expect(DayForecast.forecast).to eq(upload_from_today)
@@ -60,7 +61,6 @@ RSpec.describe DayForecast, :type => :model do
       uploaded_yesterday = uploaded_forecast(days_from_today, DateTime.now - 1)
       forecast = DayForecast.forecast
       expect(forecast).to_not eq(uploaded_yesterday)
-
       expect(forecast.length).to eq(7)
     end
 
@@ -69,6 +69,28 @@ RSpec.describe DayForecast, :type => :model do
       forecast = DayForecast.forecast
       expect(forecast).to_not eq(not_today_forecasts)
       expect(forecast.length).to eq(7)
+    end
+  end
+
+  describe ".today" do
+    it "returns today's forecast if it was uploaded today" do
+      upload_from_today = uploaded_forecast(days_from_today)
+      todays_forecast = upload_from_today[0]
+      expect(DayForecast.today).to eq(todays_forecast)
+    end
+
+    it "returns updated forecasts of the forecast was not created today" do
+      yesterday = uploaded_forecast(days_from_today, DateTime.now - 1)[0]
+      forecast_today = DayForecast.today
+      expect(forecast_today).to_not eq(yesterday)
+      expect(forecast_today[:day]).to eq("Today")
+    end
+
+    it "returns a new forecast if the first forecast in the database is not from today" do
+      not_today_forecast = uploaded_forecast(days_from_today[0...-1].unshift("Sunday"))[0]
+      forecast_today = DayForecast.today
+      expect(forecast_today).to_not eq(not_today_forecast)
+      expect(forecast_today[:day]).to eq("Today")
     end
   end
 end

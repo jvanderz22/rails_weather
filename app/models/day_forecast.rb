@@ -10,9 +10,13 @@ class DayForecast < ActiveRecord::Base
     if is_current_forecast?(found_forecast)
       found_forecast
     else
-      delete_forecast(found_forecast)
+      delete_forecasts
       create_new_forecast
     end
+  end
+
+  def self.today
+    forecast[0]
   end
 
   private
@@ -26,13 +30,13 @@ class DayForecast < ActiveRecord::Base
     create!(forecast)
   end
 
-  def self.delete_forecast(forecasts)
-    forecasts.each { |forecast| forecast.destroy }
+  def self.delete_forecasts
+    DayForecast.all.each { |forecast| forecast.destroy }
   end
 
   def self.is_current_forecast?(forecasts)
     first_forecast = forecasts.first
-    return false if first_forecast.nil? ||  first_forecast[:day] == "Today"
+    return false if first_forecast.nil? ||  first_forecast[:day] != "Today"
     first_forecast.created_at.to_date == DateTime.now.utc.to_date
   end
 

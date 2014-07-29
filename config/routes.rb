@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { registrations: 'registrations' }
   get 'daily_forecast/index'
 
   get 'daily_forecast', to: 'daily_forecast#index'

@@ -3,26 +3,8 @@ require 'day_crawler'
 require 'current_crawler'
 
 namespace :events do
-  desc "Scrape a daily forecast off the web"
-  task day_scraper: :environment do
-    forecasts = DayCrawler.new.forecast
-    forecasts.each do |forecast|
-      puts forecast
-      DayForecast.create(forecast)
-    end
-  end
-
-  desc "Scrape an hourly forecast off the web and add it to the database"
-  task hour_scraper: :environment do
-    forecasts = HourCrawler.new.forecast
-    forecasts.each do |forecast|
-      HourForecast.create(forecast)
-    end
-  end
-
-  desc "Scrape a current forecast off the web and add it to the database"
-  task current_scraper: :environment do
-    forecast = CurrentCrawler.new.forecast
-    CurrentForecast.create(forecast)
+  desc "Send forecast emails to all subscribed users"
+  task email_forecast: :environment do
+    ForecastEmailHelper.email_users
   end
 end
